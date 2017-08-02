@@ -1,0 +1,17 @@
+#logo{
+   width: 50%; 
+   padding-top: 15%;
+   min-width: 60%;
+}
+
+.prettytext {
+    font-family: Courier New, Courier, monospace,sans-serif;
+    color: darkcyan;
+    
+}
+
+#loadFileXml{
+    width: 50%;
+     
+}
+
