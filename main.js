@@ -72,6 +72,7 @@ function displayJSON(data) {
 
 }
 
+
 function makeDocument() {
   // window.open('popup.html', 'width=150, height=300');
 
