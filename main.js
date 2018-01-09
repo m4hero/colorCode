@@ -2,16 +2,17 @@ var resultObj;
 var resultArr;
 var doc;
 var title;
+var srcNode;
+var modal;
 
+var CV_URL = 'https://vision.googleapis.com/v1/images:annotate?key=' + 'AIzaSyADkh9ZzP9FqHXjLawyzQU4z78h-4pL8JA';
 
-
-var CV_URL = 'https://vision.googleapis.com/v1/images:annotate?key=' + window.apiKey;
-
-$(function () {
+$(function() {
   $('#fileform').on('submit', uploadFiles);
 });
 
-function uploadFiles (event) {
+function uploadFiles(event) {
+  $('.loader').css('display', 'block');
   event.preventDefault(); // Prevent the default form post
 
   // Grab the file and asynchronously convert to base64.
@@ -21,177 +22,151 @@ function uploadFiles (event) {
   reader.readAsDataURL(file);
 }
 
-function processFile (event) {
+function processFile(event) {
   var content = event.target.result;
   sendFileToCloudVision(content.replace('data:image/jpeg;base64,', ''));
 }
 
-function sendFileToCloudVision (content) {
+function sendFileToCloudVision(content) {
   var type = $('#fileform [name=type]').val();
 
   var request = {
-    requests: [{
-      image: {
-        content: content
-      },
-      features: [{
-        type: type,
-        maxResults: 200
-      }]
-    }]
+    requests: [
+      {
+        image: {
+          content: content
+        },
+        features: [
+          {
+            type: type,
+            maxResults: 200
+          }
+        ]
+      }
+    ]
   };
 
   $('#results').text('Loading...');
-  $.post({
-    url: CV_URL,
-    data: JSON.stringify(request),
-    contentType: 'application/json'
-  }).fail(function (jqXHR, textStatus, errorThrown) {
+  $.post({url: CV_URL, data: JSON.stringify(request), contentType: 'application/json'}).fail(function(jqXHR, textStatus, errorThrown) {
     $('#results').text('ERRORS: ' + textStatus + ' ' + errorThrown);
+  }).success(function() {
+    $('.loader').css('animation-play-state', 'paused');
   }).done(displayJSON);
+
 }
 
-function displayJSON (data) {
+function displayJSON(data) {
+  $("#inputBtn").attr("value", "File Submitted");
   var contents = JSON.stringify(data, null, 4);
-  
-  $('#results').text(contents);
-
-
-  var y = JSON.parse(contents);
-  var x = y["responses"];
-  var z = x[0];
-  var q = z["fullTextAnnotation"]
-  resultObj = q["text"];
-  
-  
-  var evt = new Event('results-displayed');
-  evt.results = contents;
-  document.dispatchEvent(evt);
-  ;
-
+  var parsing = JSON.parse(contents);
+  resultObj = parsing.responses[0].fullTextAnnotation.text
 }
 
+function makeDocument() {
+  doc = document.implementation.createHTMLDocument();
+  resultArr = resultObj.split("\n");
 
-  function makeDocument() {
-  var frame = document.getElementById("theFrame");
-          
-  var doc = document.implementation.createHTMLDocument();
-  // $(doc).find("head").remove()
- 
-  // $("html").addClass("mainHtml")
-  resultArr =  resultObj.split("\n") 
-  
-  
-  // function buildHeadElement(){
-  // var head = doc.createElement('head');
-  // doc.appendChild(doc);
-  // }
-function buildTitleElement(){
-  if (title == undefined) {
-  title = doc.createElement("title");
-    doc.head.appendChild(title);
-    title.innerText = "Title Placeholder";
-}}
+  function buildTitleElement() {
+    if (title === undefined) {
+      title = doc.createElement("title");
+      doc.head.appendChild(title);
+      title.innerText = "Title Placeholder";
+    }
+  }
 
-function buildParaElement(){
-   var p = doc.createElement("p");
+  function buildParaElement() {
+    var p = doc.createElement("p");
     doc.body.appendChild(p);
     p.innerText = "Paragraph Placeholder";
-}
+  }
 
-function buildHeaderTwoElement(){
+  function buildHeaderOneElement() {
+    var h1 = doc.createElement("h1");
+    doc.body.appendChild(h1);
+    h1.innerText = "Header Placeholder";
+  }
+
+  function buildHeaderTwoElement() {
     var h2 = doc.createElement("h2");
     doc.body.appendChild(h2);
-    p.innerText = "Header Placeholder";
-}
+    h2.innerText = "Header Placeholder";
+  }
 
-function buildImageElement(){
-  var img = doc.createElement("img");
+  function buildImageElement() {
+    var img = doc.createElement("img");
     doc.body.appendChild(img);
-    img.src= "http://www.techonline.com/img/tmp/logo-placeholder.png";
-}
+    img.src = "http://www.techonline.com/img/tmp/logo-placeholder.png";
+  }
 
-function buildBreakElement(){
-  var br = doc.createElement("br");
+  function buildBreakElement() {
+    var br = doc.createElement("br");
     doc.body.appendChild(br);
-}
+  }
 
-function buildCenterElement(){
-  var center = doc.createElement("center");
+  function buildCenterElement() {
+    var center = doc.createElement("center");
     doc.body.appendChild(center);
-}
+  }
 
-function buildBoldElement(){
+  function buildBoldElement() {
     var bold = doc.createElement("b");
     doc.body.appendChild(bold);
-}
-
-function buildItalicElement(){
-  var italic = doc.createElement("i");
-    doc.body.appendChild(italic);
-}
-
-
-
-function generatePageElements(resultArr){
-  for(var i=0;i<resultArr.length;i++){
-    // if(resultArr[i].includes("head")){
-    //   buildHeadElement();
-    if(resultArr[i].includes("title")){
-      buildTitleElement();
-    }else if(resultArr[i].includes("p")){
-      buildParaElement();
-    }else if(resultArr[i].includes("h2")){
-      buildHeaderTwoElement();
-    }else if(resultArr[i].includes("img")){
-      buildImageElement();
-    }else if(resultArr[i].includes("br")){
-      buildBreakElement();
-    }else if(resultArr[i].includes("center")){
-      buildCenterElement();
-    }else if(resultArr[i].includes("b")){
-      buildBoldElement();
-    }else if(resultArr[i].includes("i")){
-      buildItalicElement();
-    }
-    
   }
-}
-generatePageElements(resultArr);
 
+  function buildItalicElement() {
+    var italic = doc.createElement("i");
+    doc.body.appendChild(italic);
+  }
 
-// function checkforBasics(resultArr){
-//   var countup = 0;
-// for(var i=0;i<resultArr.length;i++){
-//   if(resultArr[i].includes("head")){
-//     countup += 1;
-//   }else if(resultArr[i].includes("body")){
-//     countup +=1;
-//   }else if(resultArr[i].includes("html")){
-//     countup +=1;
-//   }else if(countup === 3){
-//     generatePageElements(resultArr);
-//   }
-// }
-  
-// checkforBasics(resultArr);
+  function generatePageElements(resultArr) {
+    for (var i = 0; i < resultArr.length; i++) {
 
-  //  var p = doc.createElement("p");
- 
-  
-  //  p.innerText = resultObj;
-  
-  // try {
-  //   doc.body.appendChild(p);
-  // } catch(e) {
-  //   console.log(e);
-  // }
+      if ((resultArr[i].includes("title") || resultArr[i].includes("TITLE")) && (resultArr[i].includes("/") !== true)) {
+        buildTitleElement();
+      } else if ((resultArr[i].includes("p") || resultArr[i].includes("P")) && ((resultArr[i].includes("/") !== true))) {
+        buildParaElement();
+      } else if ((resultArr[i].includes("h1") || resultArr[i].includes("H1")) && ((resultArr[i].includes("/") !== true))) {
+        buildHeaderOneElement();
+      } else if ((resultArr[i].includes("h2") || resultArr[i].includes("H2")) && ((resultArr[i].includes("/") !== true))) {
+        buildHeaderTwoElement();
+      } else if ((resultArr[i].includes("img") || resultArr[i].includes("IMG")) && ((resultArr[i].includes("/") !== true))) {
+        buildImageElement();
+      } else if ((resultArr[i].includes("br") || resultArr[i].includes("BR")) && ((resultArr[i].includes("/") !== true))) {
+        buildBreakElement();
+      } else if ((resultArr[i].includes("center") || resultArr[i].includes("CENTER")) && ((resultArr[i].includes("/") !== true))) {
+        buildCenterElement();
+      } else if ((resultArr[i].includes("b") || resultArr[i].includes("B")) && ((resultArr[i].includes("/") !== true))) {
+        buildBoldElement();
+      } else if ((resultArr[i].includes("i") || resultArr[i].includes("I")) && ((resultArr[i].includes("/") !== true))) {
+        buildItalicElement();
+      }
+
+    }
+  }
+  generatePageElements(resultArr);
 
   // Copy the new HTML document into the frame
 
-  var destDocument = frame.contentDocument;
-  var srcNode = doc.documentElement;
-  var newNode = destDocument.importNode(srcNode, true);
-  
-  destDocument.replaceChild(newNode, destDocument.documentElement);
-  }
+  srcNode = doc.documentElement;
+
+  // -----------------------------------------------
+  // Get the modal
+  modal = document.getElementById('myModal');
+
+  // Get the button that opens the modal
+  var btn = document.getElementById("myBtn");
+
+  // When the user clicks the button, open the modal
+  btn.onclick = function() {
+    modal.style.display = "block";
+  };
+
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  };
+
+  $('#myModal .modal-content').html(srcNode);
+}

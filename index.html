@@ -1,21 +1,23 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en">
+
 <head>
-	<meta charset="UTF-8">
+  <meta charset="UTF-8">
   <title>colorCODE</title>
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css?family=Handlee|Palanquin|effect=shadow-multiple" rel="stylesheet">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-	<script type="text/javascript" src="key.js"></script>
-	<script type="text/javascript" src="main.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+  <script type="text/javascript" src="key.js"></script>
+  <script type="text/javascript" src="main.js"></script>
 </head>
+
 <body>
   <center>
-  <img id="logo" src="logo.jpg" alt="">
-  <h1 class="prettytext"> <center> DRAFTING </center> <center> BOARD!</center> </h1> 
-	<form id="fileform" action="">
-		<select name="type">
+    <img id="logo" src="logo.jpg" alt="">
+    <h1 class="prettytext"> <center> DRAFTING </center> <center> BOARD!</center> </h1>
+    <form id="fileform" action="">
+      <select name="type">
       <option value="TEXT_DETECTION">TEXT_DETECTION</option>
       <option value="LANDMARK_DETECTION">LANDMARK_DETECTION</option>
       <option value="TYPE_UNSPECIFIED">TYPE_UNSPECIFIED</option>
@@ -24,17 +26,35 @@
       <option value="LABEL_DETECTION">LABEL_DETECTION</option>
       <option value="SAFE_SEARCH_DETECTION">SAFE_SEARCH_DETECTION</option>
       <option value="IMAGE_PROPERTIES">IMAGE_PROPERTIES</option>
-    </select><br />
-    <input type="file" name="fileField"><br /><br />
-    <input  type="submit" name="submit" value="Submit">
-  </form>
+    </select><br /><br />
+      <input type="file" name="fileField"><br /><br />
+      <input id="inputBtn" type="submit" name="submit" value="Submit"><br /><br />
+      <div class="loader"></div><br />
+    </form>
+
+    <!-- Trigger/Open The Modal //////////////////// -->
+    <button id="myBtn"><a href="javascript:makeDocument()">Open Modal</button>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+
+      <!-- Modal content -->
+      <div id="modalContent" class="modal-content">
+        <span class="close">&times;</span>
+        <p>Some text in the Modal..</p>
+      </div>
+
+    </div>
   </center>
 
   <center>
-  <p><a href="javascript:makeDocument()">Show Mockup Site</a> </p>
-  <iframe id="theFrame" src="about:blank" />
+    <!-- <p id="clicker"><a href="javascript:makeDocument()">Show Mockup Site</a> </p> -->
+    </div>
+    <!-- <iframe id="theFrame" src="about:blank" /> -->
   </center>
 
-  <code style="white-space:pre" id="results"></code>
+  <!-- <code style="white-space:pre" id="results"></code> -->
+<iframe height="400px" width="100%" src="https://repl.it/@mostafasharaf/colorCode?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals" width="100%" ></iframe>
 </body>
+
 </html>
